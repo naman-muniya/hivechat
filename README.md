@@ -1,6 +1,7 @@
 # HiveChat App
-Group chat app</br>
-TechStack</br>
+Group chat app</br></br>
+
+## TechStack
 Node.js</br>
 Express</br>
 Socket.io</br>
