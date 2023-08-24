@@ -1,14 +1,14 @@
 # HiveChat App
+ 
+Group chat app 
+TechStack 
+Node.js 
+Express 
+Socket.io 
+Vanilla JS 
 
-Group chat app
-TechStack
-Node.js,
-Express,
-Socket.io,
-Vanilla JS
+## Steps for Running 
 
-## Steps for Running
-
-npm install
-npm run dev
+npm install 
+npm run dev 
 Go to localhost:3000
