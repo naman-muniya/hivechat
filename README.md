@@ -1,5 +1,5 @@
 # HiveChat App
-Realtime Group Chat Application with Rooms </br></br>
+Realtime Group Chat Application with Rooms.
 
 ## TechStack
 Node.js</br>
