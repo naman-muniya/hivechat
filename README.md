@@ -11,3 +11,6 @@ Vanilla JS</br>
 npm install</br>
 npm run dev</br>
 Go to localhost:3000</br>
+
+## Online Host
+https://hivechat-g364.onrender.com
