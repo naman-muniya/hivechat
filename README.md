@@ -7,7 +7,7 @@ Express</br>
 Socket.io</br>
 Vanilla JS</br>
 
-## Steps for Running
+## Steps for Running Locally
 npm install</br>
 npm run dev</br>
 Go to localhost:3000</br>
