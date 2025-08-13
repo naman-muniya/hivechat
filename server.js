@@ -24,12 +24,8 @@ app.use(express.static(path.join(__dirname, "public")));
 const botName = "HiveChat Bot";
 
 (async () => {
-  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
-  pubClient = createClient({
-    url: redisUrl,
-    password: redisToken
-  });
+  const redisUrl = process.env.REDIS_URL;
+  pubClient = createClient({ url: redisUrl });
   await pubClient.connect();
   subClient = pubClient.duplicate();
   io.adapter(createAdapter(pubClient, subClient));
