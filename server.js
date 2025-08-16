@@ -13,6 +13,10 @@ const {
   userLeave,
   updateUserRoom,
   getRoomUsers,
+  isUsernameTaken,
+  getAvailableRooms,
+  addRoom,
+  deleteRoom,
 } = require("./utils/users");
 
 const app = express();
@@ -36,8 +40,77 @@ const botName = "HiveChat Bot";
 io.on("connection", (socket) => {
   console.log(io.of("/").adapter);
   
+  // Send available rooms to newly connected user
+  socket.emit("availableRooms", getAvailableRooms());
+  
+  // Handle username availability check
+  socket.on("checkUsername", ({ username }) => {
+    const isTaken = isUsernameTaken(username);
+    socket.emit("usernameCheckResult", {
+      username,
+      available: !isTaken
+    });
+  });
+  
+  // Handle room creation
+  socket.on("createRoom", ({ roomName, description }) => {
+    const result = addRoom(roomName, description);
+    
+    if (result.success) {
+      // Broadcast new room to all connected users
+      io.emit("roomCreated", result.room);
+      socket.emit("roomCreationResult", { success: true, room: result.room });
+    } else {
+      socket.emit("roomCreationResult", { success: false, message: result.message });
+    }
+  });
+  
+  // Handle room deletion
+  socket.on("deleteRoom", ({ roomName }) => {
+    const result = deleteRoom(roomName);
+    
+    if (result.success) {
+      // Broadcast room deletion to all connected users
+      io.emit("roomDeleted", result.room);
+      socket.emit("roomDeletionResult", { success: true, room: result.room });
+    } else {
+      socket.emit("roomDeletionResult", { success: false, message: result.message });
+    }
+  });
+  
+  // Handle room list request
+  socket.on("getRooms", () => {
+    socket.emit("availableRooms", getAvailableRooms());
+  });
+  
   socket.on("joinRoom", async ({ username, room }) => {
+    // Input validation and sanitization
+    if (!username || !room) {
+      socket.emit('error', 'Username and room are required');
+      return;
+    }
+    
+    // Sanitize inputs
+    username = username.toString().trim().substring(0, 20); // Limit length
+    room = room.toString().trim().substring(0, 20); // Limit length
+    
+    // Basic validation
+    if (username.length < 1 || room.length < 1) {
+      socket.emit('error', 'Invalid username or room');
+      return;
+    }
+    
+    // Prevent XSS by escaping special characters
+    username = username.replace(/[<>]/g, '');
+    room = room.replace(/[<>]/g, '');
+
     const user = userJoin(socket.id, username, room);
+    
+    // Check if username was taken
+    if (!user) {
+      socket.emit('error', `Username "${username}" is already taken. Please choose a different name.`);
+      return;
+    }
 
     socket.join(user.room);
 

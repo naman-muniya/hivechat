@@ -36,21 +36,22 @@
                 required
                 autocomplete="off"
               />
+              <div class="username-status" id="username-status"></div>
             </div>
             <div class="form-group">
               <label for="room">
                 <i class="fas fa-hashtag"></i>
                 Room
               </label>
-              <select name="room" id="room" required>
-                <option value="">Select a room...</option>
-                <option value="general"># General</option>
-                <option value="random"># Random</option>
-                <option value="tech"># Tech</option>
-                <option value="music"># Music</option>
-                <option value="gaming"># Gaming</option>
-                <option value="movies"># Movies</option>
-              </select>
+              <div class="room-select-container">
+                <select name="room" id="room" required>
+                  <option value="">Select a room...</option>
+                  <option value="general"># General</option>
+                </select>
+                <button type="button" class="create-room-btn" id="create-room-btn">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
             </div>
             <button type="submit" class="join-btn" id="join-btn" disabled>
               <i class="fas fa-sign-in-alt"></i>
@@ -61,19 +62,118 @@
       </div>
     </div>
 
+    <!-- Create Room Modal -->
+    <div class="modal-overlay" id="create-room-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3><i class="fas fa-plus-circle"></i> Create New Room</h3>
+          <button class="modal-close" id="modal-close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="create-room-form">
+            <div class="form-group">
+              <label for="new-room-name">
+                <i class="fas fa-hashtag"></i>
+                Room Name
+              </label>
+              <input
+                type="text"
+                id="new-room-name"
+                placeholder="Enter room name..."
+                required
+                maxlength="20"
+              />
+              <small>Room names should be 3-20 characters long</small>
+            </div>
+            <div class="form-group">
+              <label for="new-room-description">
+                <i class="fas fa-info-circle"></i>
+                Description (optional)
+              </label>
+              <textarea
+                id="new-room-description"
+                placeholder="What's this room about?"
+                maxlength="100"
+                rows="3"
+              ></textarea>
+              <small>Brief description of the room's purpose</small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="modal-cancel">
+            Cancel
+          </button>
+          <button type="button" class="btn-primary" id="modal-create">
+            <i class="fas fa-plus"></i>
+            Create Room
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
     <script>
+      // Socket connection for live username checking
+      const socket = io();
+      
       // Form validation
       const form = document.getElementById('join-form');
       const usernameInput = document.getElementById('username');
       const roomSelect = document.getElementById('room');
       const joinBtn = document.getElementById('join-btn');
+      const usernameStatus = document.getElementById('username-status');
+      
+      // Room creation elements
+      const createRoomBtn = document.getElementById('create-room-btn');
+      const createRoomModal = document.getElementById('create-room-modal');
+      const modalClose = document.getElementById('modal-close');
+      const modalCancel = document.getElementById('modal-cancel');
+      const modalCreate = document.getElementById('modal-create');
+      const newRoomNameInput = document.getElementById('new-room-name');
+      const newRoomDescriptionInput = document.getElementById('new-room-description');
+      
+      let usernameCheckTimeout;
+      let isUsernameAvailable = true;
+
+      // Function to check username availability
+      function checkUsernameAvailability(username) {
+        if (username.trim().length < 2) {
+          usernameStatus.innerHTML = '';
+          usernameStatus.className = 'username-status';
+          return;
+        }
+        
+        socket.emit('checkUsername', { username: username.trim() });
+      }
+
+      // Handle username availability response
+      socket.on('usernameCheckResult', (data) => {
+        const { username, available } = data;
+        
+        if (username === usernameInput.value.trim()) {
+          isUsernameAvailable = available;
+          
+          if (available) {
+            usernameStatus.innerHTML = '<i class="fas fa-check-circle"></i> Username available';
+            usernameStatus.className = 'username-status available';
+          } else {
+            usernameStatus.innerHTML = '<i class="fas fa-times-circle"></i> Username already taken';
+            usernameStatus.className = 'username-status taken';
+          }
+          
+          validateForm();
+        }
+      });
 
       // Function to check if form is valid
       function validateForm() {
         const username = usernameInput.value.trim();
         const room = roomSelect.value;
         
-        if (username && room) {
+        if (username && room && isUsernameAvailable) {
           joinBtn.disabled = false;
           joinBtn.classList.remove('disabled');
         } else {
@@ -83,7 +183,20 @@
       }
 
       // Add event listeners for real-time validation
-      usernameInput.addEventListener('input', validateForm);
+      usernameInput.addEventListener('input', (e) => {
+        const username = e.target.value.trim();
+        
+        // Clear previous timeout
+        clearTimeout(usernameCheckTimeout);
+        
+        // Set new timeout for debouncing (check after 500ms of no typing)
+        usernameCheckTimeout = setTimeout(() => {
+          checkUsernameAvailability(username);
+        }, 500);
+        
+        validateForm();
+      });
+      
       roomSelect.addEventListener('change', validateForm);
 
       // Form submission handler
@@ -104,6 +217,106 @@
 
       // Initial validation
       validateForm();
-    </script>
+       
+       // Modal functionality
+       function openModal() {
+         createRoomModal.classList.add('active');
+         newRoomNameInput.focus();
+         document.body.style.overflow = 'hidden';
+       }
+       
+       function closeModal() {
+         createRoomModal.classList.remove('active');
+         newRoomNameInput.value = '';
+         newRoomDescriptionInput.value = '';
+         document.body.style.overflow = '';
+       }
+       
+       // Event listeners for modal
+       createRoomBtn.addEventListener('click', openModal);
+       modalClose.addEventListener('click', closeModal);
+       modalCancel.addEventListener('click', closeModal);
+       
+       // Close modal when clicking outside
+       createRoomModal.addEventListener('click', (e) => {
+         if (e.target === createRoomModal) {
+           closeModal();
+         }
+       });
+       
+       // Close modal on escape key
+       document.addEventListener('keydown', (e) => {
+         if (e.key === 'Escape' && createRoomModal.classList.contains('active')) {
+           closeModal();
+         }
+       });
+       
+       // Create room functionality
+       modalCreate.addEventListener('click', () => {
+         const roomName = newRoomNameInput.value.trim();
+         const roomDescription = newRoomDescriptionInput.value.trim();
+         
+         // Validation
+         if (roomName.length < 3) {
+           alert('Room name must be at least 3 characters long.');
+           newRoomNameInput.focus();
+           return;
+         }
+         
+         if (roomName.length > 20) {
+           alert('Room name must be 20 characters or less.');
+           newRoomNameInput.focus();
+           return;
+         }
+         
+         // Send room creation request to server
+         socket.emit('createRoom', { roomName, description: roomDescription });
+       });
+       
+       // Handle room creation result
+       socket.on('roomCreationResult', (result) => {
+         if (result.success) {
+           // Room was created successfully
+           closeModal();
+           alert(`Room "${result.room.name}" created successfully!`);
+         } else {
+           // Room creation failed
+           alert(result.message || 'Failed to create room. Please try again.');
+         }
+       });
+       
+       // Handle new room created (from other users)
+       socket.on('roomCreated', (newRoom) => {
+         // Add new room to dropdown
+         const newOption = document.createElement('option');
+         newOption.value = newRoom.name;
+         newOption.textContent = `# ${newRoom.name}`;
+         if (newRoom.description) {
+           newOption.title = newRoom.description;
+         }
+         
+         // Add to select dropdown
+         roomSelect.appendChild(newOption);
+       });
+       
+       // Handle available rooms update
+       socket.on('availableRooms', (rooms) => {
+         // Clear existing options except the first one (placeholder)
+         while (roomSelect.options.length > 1) {
+           roomSelect.remove(1);
+         }
+         
+         // Add rooms from server
+         rooms.forEach(room => {
+           const option = document.createElement('option');
+           option.value = room.name;
+           option.textContent = `# ${room.name}`;
+           if (room.description) {
+             option.title = room.description;
+           }
+           roomSelect.appendChild(option);
+         });
+       });
+     </script>
   </body>
 </html>

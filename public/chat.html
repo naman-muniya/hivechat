@@ -26,16 +26,16 @@
               <span class="room-label">Room:</span>
               <span id="room-name" class="room-name"></span>
             </div>
-            <div class="room-switcher">
-              <select id="room-select" class="room-select">
-                <option value="">Switch Room...</option>
+            <div class="room-selector">
+              <select id="room-select">
                 <option value="general"># General</option>
-                <option value="random"># Random</option>
-                <option value="tech"># Tech</option>
-                <option value="music"># Music</option>
-                <option value="gaming"># Gaming</option>
-                <option value="movies"># Movies</option>
               </select>
+              <button id="create-room-btn" class="create-room-btn" title="Create New Room">
+                <i class="fas fa-plus"></i>
+              </button>
+              <button id="delete-room-btn" class="delete-room-btn" title="Delete Current Room" style="display: none;">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -89,6 +89,58 @@
       </main>
     </div>
     
+    <!-- Create Room Modal -->
+    <div class="modal-overlay" id="create-room-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3><i class="fas fa-plus-circle"></i> Create New Room</h3>
+          <button class="modal-close" id="modal-close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="create-room-form">
+            <div class="form-group">
+              <label for="new-room-name">
+                <i class="fas fa-hashtag"></i>
+                Room Name
+              </label>
+              <input
+                type="text"
+                id="new-room-name"
+                placeholder="Enter room name..."
+                required
+                maxlength="20"
+              />
+              <small>Room names should be 3-20 characters long</small>
+            </div>
+            <div class="form-group">
+              <label for="new-room-description">
+                <i class="fas fa-info-circle"></i>
+                Description (optional)
+              </label>
+              <textarea
+                id="new-room-description"
+                placeholder="What's this room about?"
+                maxlength="100"
+                rows="3"
+              ></textarea>
+              <small>Brief description of the room's purpose</small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="modal-cancel">
+            Cancel
+          </button>
+          <button type="button" class="btn-primary" id="modal-create">
+            <i class="fas fa-plus"></i>
+            Create Room
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.2/qs.min.js"
       integrity="sha256-TDxXjkAUay70ae/QJBEpGKkpVslXaHHayklIVglFRT4="
