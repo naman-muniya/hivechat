@@ -2,12 +2,41 @@
 Realtime Group Chat Application with Rooms Feature.
 
 ## TechStack
-Node.js</br>
-Express</br>
-Socket.io</br>
-Vanilla JS</br>
+- Node.js
+- Express
+- Socket.io
+- Redis (for message persistence)
+- Vanilla JavaScript
+- Modern CSS
 
-## Steps for Running
-npm install</br>
-npm run dev</br>
-Go to localhost:3000</br>
+## Features
+- Real-time messaging
+- Room-based chat
+- Message history persistence
+- Mobile-responsive design
+- User online status
+- Room switching
+- Modern UI/UX
+
+## Local Development
+```bash
+npm install
+npm run dev
+```
+Go to `http://localhost:3000`
+
+## Environment Variables
+Create a `.env` file with:
+```
+REDIS_URL=your_redis_url_here
+PORT=3000
+```
+
+## Deployment
+This app is ready for deployment on:
+- Render
+- Heroku
+- Railway
+- Any Node.js hosting platform
+
+Make sure to set the `REDIS_URL` environment variable in your hosting platform.

@@ -23,6 +23,16 @@ function userLeave(id) {
   }
 }
 
+// Update user room (for room switching)
+function updateUserRoom(id, newRoom) {
+  const user = users.find((user) => user.id === id);
+  if (user) {
+    user.room = newRoom;
+    return user;
+  }
+  return null;
+}
+
 // Get room users
 function getRoomUsers(room) {
   return users.filter((user) => user.room === room);
@@ -32,5 +42,6 @@ module.exports = {
   userJoin,
   getCurrentUser,
   userLeave,
+  updateUserRoom,
   getRoomUsers,
 };

@@ -4,50 +4,106 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <script
-      src="https://kit.fontawesome.com/91282e916d.js"
-      crossorigin="anonymous"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
-      integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
-      crossorigin="anonymous"
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css" />
-    <title>HiveChat</title>
+    <title>HiveChat - Modern Group Chat</title>
   </head>
   <body>
     <div class="join-container">
-      <header class="join-header">
-        <h1><i class="fa-solid fa-comments"></i> HiveChat</h1>
-      </header>
-      <main class="join-main">
-        <form action="chat.html">
-          <div class="form-control">
-            <label for="username">Username</label>
-            <input
-              type="text"
-              name="username"
-              id="username"
-              placeholder="Enter username..."
-              required
-            />
+      <div class="join-card">
+        <div class="join-header">
+          <div class="logo">
+            <i class="fas fa-bee"></i>
+            <h1>HiveChat</h1>
           </div>
-          <div class="form-control">
-            <label for="room">Room</label>
-            <select name="room" id="room">
-              <option value="India">India</option>
-              <option value="Sweden">Sweden</option>
-              <option value="France">France</option>
-              <option value="USA">USA</option>
-              <option value="UK">UK</option>
-              <option value="Japan">Japan</option>
-            </select>
-          </div>
-          <button type="submit" class="btn">Join Chat</button>
-        </form>
-      </main>
+          <p class="subtitle">Connect with your hive in real-time</p>
+        </div>
+        <main class="join-main">
+          <form action="chat.html" class="join-form" id="join-form">
+            <div class="form-group">
+              <label for="username">
+                <i class="fas fa-user"></i>
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                id="username"
+                placeholder="Enter your username..."
+                required
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group">
+              <label for="room">
+                <i class="fas fa-hashtag"></i>
+                Room
+              </label>
+              <select name="room" id="room" required>
+                <option value="">Select a room...</option>
+                <option value="general"># General</option>
+                <option value="random"># Random</option>
+                <option value="tech"># Tech</option>
+                <option value="music"># Music</option>
+                <option value="gaming"># Gaming</option>
+                <option value="movies"># Movies</option>
+              </select>
+            </div>
+            <button type="submit" class="join-btn" id="join-btn" disabled>
+              <i class="fas fa-sign-in-alt"></i>
+              Join Chat
+            </button>
+          </form>
+        </main>
+      </div>
     </div>
+
+    <script>
+      // Form validation
+      const form = document.getElementById('join-form');
+      const usernameInput = document.getElementById('username');
+      const roomSelect = document.getElementById('room');
+      const joinBtn = document.getElementById('join-btn');
+
+      // Function to check if form is valid
+      function validateForm() {
+        const username = usernameInput.value.trim();
+        const room = roomSelect.value;
+        
+        if (username && room) {
+          joinBtn.disabled = false;
+          joinBtn.classList.remove('disabled');
+        } else {
+          joinBtn.disabled = true;
+          joinBtn.classList.add('disabled');
+        }
+      }
+
+      // Add event listeners for real-time validation
+      usernameInput.addEventListener('input', validateForm);
+      roomSelect.addEventListener('change', validateForm);
+
+      // Form submission handler
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const username = usernameInput.value.trim();
+        const room = roomSelect.value;
+        
+        if (!username || !room) {
+          alert('Please enter a username and select a room to continue.');
+          return;
+        }
+        
+        // Redirect to chat with parameters
+        window.location.href = `chat.html?username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}`;
+      });
+
+      // Initial validation
+      validateForm();
+    </script>
   </body>
 </html>

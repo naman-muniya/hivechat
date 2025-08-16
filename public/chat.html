@@ -3,47 +3,92 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script
-      src="https://kit.fontawesome.com/91282e916d.js"
-      crossorigin="anonymous"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
-      integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
-      crossorigin="anonymous"
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css" />
-    <title>HiveChat</title>
+    <title>HiveChat - Chat Room</title>
   </head>
   <body>
     <div class="chat-container">
+      <!-- Backdrop overlay for mobile sidebar -->
+      <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+      
       <header class="chat-header">
-        <h1><i class="fa-solid fa-comments"></i> HiveChat</h1>
-        <a id="leave-btn" class="btn">Leave Room</a>
+        <div class="header-left">
+          <div class="logo">
+            <i class="fas fa-bee"></i>
+            <h1>HiveChat</h1>
+          </div>
+          <div class="room-controls">
+            <div class="room-info">
+              <span class="room-label">Room:</span>
+              <span id="room-name" class="room-name"></span>
+            </div>
+            <div class="room-switcher">
+              <select id="room-select" class="room-select">
+                <option value="">Switch Room...</option>
+                <option value="general"># General</option>
+                <option value="random"># Random</option>
+                <option value="tech"># Tech</option>
+                <option value="music"># Music</option>
+                <option value="gaming"># Gaming</option>
+                <option value="movies"># Movies</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="header-right">
+          <button id="sidebar-toggle" class="sidebar-toggle">
+            <i class="fas fa-users"></i>
+          </button>
+          <button id="leave-btn" class="leave-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            Leave Room
+          </button>
+        </div>
       </header>
+      
       <main class="chat-main">
         <div class="chat-sidebar">
-          <h3><i class="fas fa-comments"></i> Room Name:</h3>
-          <h2 id="room-name"></h2>
-          <h3><i class="fas fa-users"></i> Users</h3>
-          <ul id="users"></ul>
+          <div class="sidebar-section">
+            <h3>
+              <i class="fas fa-users"></i>
+              Online Users
+            </h3>
+            <div class="user-count">
+              <span id="user-count">0</span> users online
+            </div>
+            <ul id="users" class="users-list"></ul>
+          </div>
         </div>
-        <div class="chat-messages"></div>
+        
+        <div class="chat-content">
+          <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be inserted here -->
+          </div>
+          
+          <div class="chat-form-container">
+            <form id="chat-form" class="chat-form">
+              <div class="input-group">
+                <input
+                  id="msg"
+                  type="text"
+                  placeholder="Type your message..."
+                  required
+                  autocomplete="off"
+                />
+                <button type="submit" class="send-btn">
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </main>
-      <div class="chat-form-container">
-        <form id="chat-form">
-          <input
-            id="msg"
-            type="text"
-            placeholder="Enter Message"
-            required
-            autocomplete="off"
-          />
-          <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
-        </form>
-      </div>
     </div>
+    
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.2/qs.min.js"
       integrity="sha256-TDxXjkAUay70ae/QJBEpGKkpVslXaHHayklIVglFRT4="
