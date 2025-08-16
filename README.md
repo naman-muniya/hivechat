@@ -1,6 +1,9 @@
 # HiveChat App
 Realtime Group Chat Application with Rooms Feature.
 
+## Demo
+https://github.com/user-attachments/assets/7581b938-7bc5-471c-b4cf-171c5e366147
+
 ## TechStack
 - Node.js
 - Express
